@@ -1,0 +1,17 @@
+= An All-Photonic Molecule-Based Parity Generator/Checker for Error Detection in Data Transmission
+<<< web-clip
+<<< journal
+
+Magnus Bälter †, Shiming Li †, Jesper R. Nilsson †, Joakim Andréasson *†, and Uwe Pischel *‡
+† Department of Chemical and Biological Engineering, Physical Chemistry, Chalmers University of Technology, SE-412 96 Göteborg, Sweden
+‡ CIQSO Center for Research in Sustainable Chemistry and Department of Chemical Engineering, Physical Chemistry, and Organic Chemistry, University of Huelva, Campus de El Carmen, s/n, E-21071 Huelva, Spain
+
+J. Am. Chem. Soc., 2013, 135 (28), pp 10230–10233
+DOI: 10.1021/ja403828z
+Publication Date (Web): July 5, 2013.
+
+Abstract
+The function of a parity generator/checker, which is an essential operation for detecting errors in data transmission, has been realized with multiphotochromic switches by taking advantage of a neuron-like fluorescence response and reversible light-induced transformations between the implicated isomers.
+
+[2013-07-28 01:26] 
+

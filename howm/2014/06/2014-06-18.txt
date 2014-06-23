@@ -1,0 +1,20 @@
+= [Windows][Emacs] Build Emacs 24.3 on Windows
+
+WindowsでEmacsはgnupackを用いていたが，カスタマイズ性が悪かったので自力でビルドしてみることに。
+
+http://emacsbinw64.sourceforge.net/
+https://gist.github.com/rzl24ozi/1dd94943f638e84ef1c0
+
+	% wget http://downloads.sourceforge.net/project/emacsbinw64/pretest/emacs-24.3.91.tar.xz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Femacsbinw64%2Ffiles%2Fpretest%2F&ts=1403082450&use_mirror=jaist
+	% wget https://gist.githubusercontent.com/rzl24ozi/a282260d2dd136daab14/raw/c68090c7272de99209e10f8f656f4c933b5d17de/emacs-24.3.91-w32-ime.diff
+	% tar xvf emacs-24.3.91.tar.xz
+	% cd emacs-24.3.91
+	% patch -b -p0 < ../emacs-24.3.91-w32-ime.diff
+	% ./configure --with-w32
+	% make -j4
+	% make install
+
+	alias emacs='emacs --chdir ~'
+
+[2014-06-18 17:41] 
+

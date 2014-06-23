@@ -1,0 +1,54 @@
+= [2013-07-14]- doc-view-modeの設定 for Windows
+<<< windows
+
+ghostscriptがMac (gs)とWindows (gswin32c)では異なるので，内部でghostscriptを用いているdoc-view-modeの設定を環境によって変える必要がある．
+
+ref: http://mublakcalb.blog74.fc2.com/blog-entry-363.html
+
+[2013-07-15]追記：WindowsでのPATHがうまく通っていないので，そちらの設定が先．
+>>> Emacs内PATH設定 for Windows
+
+[2013-07-14 12:43] 
+
+= helmのWindow分割について
+<<< windows
+
+YaTeXでタイプセットを行うと，ウインドウが分割され，下部に*YaTeX-typesetting*などのバッファが表示される．この状態でhelmを起動すると，分割されたウインドウにhelmバッファが表示される．このウインドウは高さが10行であるため，少々見づらい．なので，このウインドウにhelmを表示するのではなく，新たにウインドウを分割してそこにhelmを表示させてみた．
+
+設定方法は以下のとおり．
+helmは自分でカスタマイズしたmy-helmを用いていたので，ここにウインドウ制御関連の動作を付け足した．簡単でよかった．
+
+	(defun my-helm ()
+	  (interactive)
+	  ;;; Create new helm window
+	  (setq helm-window (split-window-vertically))
+	  ;;; Run helm (helm本体の起動)
+	  (helm ...)
+	  ;;; Delete helm window
+	  (delete-window helm-window)
+	  (setq helm-window nil))
+
+my-helmが呼び出されると，まずhelmバッファの表示用にウインドウを分割し，そのウインドウをhelm-windowに保持する．
+	(setq helm-window (split-window-vertically))
+その後，helm-windowにhelmを起動し，諸々の操作が終わったら，helm-windowを削除する．
+	(delete-window helm-window)
+ここまでで望んだ動作はしてくれるが，helm-windowにウインドウを保持し続けているため，念の為にこれをnilに置き換えている．
+	(setq helm-window nil)
+これが正解なのかはよく分からないけど．とりあえずこんな感じで．
+
+[2014-05-31] 追記
+上記の方法だと特定のwindow分割状態の際(特にTeXタイプセット中)，うまくhelm-windowが分割されないので，分割の方法を少々変更。
+
+変更箇所は以下のとおり。上記の設定部分をhelm本体の起動のみとし，
+	(defun my-helm ()
+	  (interactive)
+	  (helm ...))
+helmの表示の際に呼び出されるhelm-display-functionにwindow分割の処理を記述。
+	(defun helm-display-buffer (buffer)
+	  (split-window-vertically)
+	  (set-window-buffer (next-window) buffer))
+	(setq helm-display-function 'helm-display-buffer)
+これでとりあえず問題なく動作した。
+
+[2013-07-14 17:08] 
+

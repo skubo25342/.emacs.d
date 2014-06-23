@@ -1,0 +1,20 @@
+= [Emacs] windows.el & revive.el
+
+ElScreenは前回セッションの復元機能がないので，window分割の保存ができるwindows.elとrevive.elを導入。
+window情報の保存も呼び出しもできるのだが，howmのbufferとか*scratch*とかが消えた状態に復元してしまう(復元になってない！)。回避する方法で数時間詰まった。
+どうやら，保存したwindow情報を読み込む(resume-windows)際，現在のbufferを一旦全てkill-bufferするらしい。ごく自然な実装である。revive.elには，resume-windowsの際に無視するbufferをrevive:ignore-buffer-patternで指定できる。この変数は正規表現で与える必要があるので，
+	(setq revive:ignore-buffer-pattern "^*[]a-zA-Z0-9!\"#\\$%&'()-=^~\\\\|@`\\[{;\\+:\\*},<.>/\\?_ ]*\\*")
+として，"*foobar*"形式のbufferを全て無視するように設定。それにしてもelispの正規表現は意味不明すぎる…。これでOKだろうと，resume-windowsを試したところ全くもって機能していない。さらに調べてみると，実際kill-bufferを行っているのは，windows.elの(wipe-windows)なる関数(in windows.el)であることに気づく。この関数の
+	(mapcar (function kill-buffer) (buffer-list))
+がkill-bufferしている箇所。(buffer-list)はおそらくEmacs自身の関数で，全てのbufferのlistを返す。これではどう頑張っても全てのbufferがkillだろ。では，revive:ignore-buffer-patternにマッチするbufferを除いたbufferのlistはどこにあるのか…。これまた調べてみると，どうやら(revive:buffer-list)なる関数(in revive.el)がそれに相当するらしい。というわけで，
+	(mapcar (function kill-buffer) (revive:buffer-list))
+に変更してみたところ，resume-windowsで"*foobar*"形式のbufferが生き残った。
+
+これってbugではないのだろうか…？詳しい動作はよくわかってないが，おそらくこれで解決だろう。このまま使ってみる。
+
+ElScreenは数時間でお蔵入り。
+
+>>> Ref: http://www.bookshelf.jp/soft/meadow_30.html#SEC407
+
+[2014-06-02 01:07] 
+
