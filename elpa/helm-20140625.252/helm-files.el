@@ -721,15 +721,15 @@ See `helm-find-files-eshell-command-on-file-1' for more info."
 See `helm-ff-serial-rename-1'."
   (let* ((cands     (helm-marked-candidates :with-wildcard t))
          (def-name  (car cands))
-         (name      (read-string "NewName: "
-                                 (replace-regexp-in-string
-                                  "[0-9]+$" ""
-                                  (helm-basename
-                                   def-name
-                                   (file-name-extension def-name)))))
+         (name      (helm-read-string "NewName: "
+                                      (replace-regexp-in-string
+                                       "[0-9]+$" ""
+                                       (helm-basename
+                                        def-name
+                                        (file-name-extension def-name)))))
          (start     (read-number "StartAtNumber: "))
-         (extension (read-string "Extension: "
-                                 (file-name-extension (car cands))))
+         (extension (helm-read-string "Extension: "
+                                      (file-name-extension (car cands))))
          (dir       (expand-file-name
                      (helm-read-file-name
                       "Serial Rename to directory: "
@@ -1045,7 +1045,7 @@ Same as `dired-do-print' but for helm."
                            (helm-comp-read
                             "Printer: " helm-ff-printer-list)
                          printer-name))
-         (command (read-string
+         (command (helm-read-string
                    (format "Print *%s File(s):\n%s with: "
                            len
                            (mapconcat
@@ -1206,18 +1206,22 @@ or hitting C-z on \"..\"."
 (defun helm-ff-update-when-only-one-matched ()
   "Expand to directory when sole completion.
 When only one candidate is remaining and it is a directory,
-expand to this directory."
-  (when (and helm-ff-auto-update-flag
-             (null helm-ff--deleting-char-backward)
-             (helm-file-completion-source-p)
-             ;; Issue #295
-             ;; File predicates are returning t
-             ;; with paths like //home/foo.
-             ;; So check it is not the case by regexp
-             ;; to allow user to do C-a / to start e.g
-             ;; entering a tramp method e.g /sudo::.
-             (not (string-match "\\`//" helm-pattern))
-             (not (helm-ff-invalid-tramp-name-p)))
+expand to this directory.
+This happen only when `helm-ff-auto-update-flag' is non--nil
+or when `helm-pattern' is equal to \"~/\"."
+  (when (or (and helm-ff-auto-update-flag
+                 (null helm-ff--deleting-char-backward)
+                 (helm-file-completion-source-p)
+                 ;; Issue #295
+                 ;; File predicates are returning t
+                 ;; with paths like //home/foo.
+                 ;; So check it is not the case by regexp
+                 ;; to allow user to do C-a / to start e.g
+                 ;; entering a tramp method e.g /sudo::.
+                 (not (string-match "\\`//" helm-pattern))
+                 (not (helm-ff-invalid-tramp-name-p)))
+            ;; Fix issue #542.
+            (string= helm-pattern "~/"))
     (let* ((history-p   (string= (assoc-default
                                   'name (helm-get-current-source))
                                  "Read File Name History"))
@@ -1441,12 +1445,12 @@ purpose."
               (or (>= (length (helm-basename path)) 3) dir-p)))
       (setq helm-pattern (helm-ff--transform-pattern-for-completion path)))
     ;; This have to be set after [1] to allow deleting char backward.
-    (setq path-name-dir (if (and dir-p
-                                 ;; Add the final "/" to path
-                                 ;; when `helm-ff-auto-update-flag' is enabled.
-                                 helm-ff-auto-update-flag)
-                            (file-name-as-directory (expand-file-name path))
-                          (file-name-directory (expand-file-name path))))
+    (setq path-name-dir (expand-file-name
+                         (if (and dir-p helm-ff-auto-update-flag)
+                            ;; Add the final "/" to path
+                            ;; when `helm-ff-auto-update-flag' is enabled.
+                            (file-name-as-directory path)
+                          (file-name-directory path))))
     (setq helm-ff-default-directory
           (if (string= helm-pattern "")
               (expand-file-name "/") ; Expand to "/" or "c:/"
@@ -1515,14 +1519,14 @@ systems."
        (not (memq helm-mp-matching-method '(multi1 multi3p)))))
 
 (defun helm-ff--transform-pattern-for-completion (pattern)
-  "Maybe return FNAME with it's basename modified as a regexp.
+  "Maybe return PATTERN with it's basename modified as a regexp.
 This happen only when `helm-ff-smart-completion' is enabled.
 This provide a similar behavior as `ido-enable-flex-matching'.
 See also `helm--mapconcat-candidate'.
-If FNAME is an url returns it unmodified.
-When FNAME contain a space fallback to match-plugin.
+If PATTERN is an url returns it unmodified.
+When PATTERN contain a space fallback to match-plugin.
 If basename contain one or more space fallback to match-plugin.
-If FNAME is a valid directory name,return FNAME unchanged."
+If PATTERN is a valid directory name,return PATTERN unchanged."
   ;; handle bad filenames containing a backslash.
   (setq pattern (helm-ff-handle-backslash pattern))
   (let ((bn      (helm-basename pattern))
@@ -1535,8 +1539,12 @@ If FNAME is a valid directory name,return FNAME unchanged."
     (cond
       ((or (and dir-p tramp-p (string-match ":\\'" pattern))
            (string= pattern "")
-           (and dir-p (<= (length bn) 2)))
-       ;; Use full FNAME on e.g "/ssh:host:".
+           (and dir-p (<= (length bn) 2))
+           ;; Fix Issue #541 when BD have a subdir similar
+           ;; to BN, don't switch to match plugin
+           ;; which will match both.
+           (and dir-p (string-match (regexp-quote bn) bd)))
+       ;; Use full PATTERN on e.g "/ssh:host:".
        (regexp-quote pattern))
       ;; Prefixing BN with a space call match-plugin completion.
       ;; This allow showing all files/dirs matching BN (Issue #518).
@@ -1564,9 +1572,10 @@ If FNAME is a valid directory name,return FNAME unchanged."
 
 (defun helm-ff-save-history ()
   "Store the last value of `helm-ff-default-directory' in `helm-ff-history'.
-Note that only directories are saved here."
+Note that only existing directories are saved here."
   (when (and helm-ff-default-directory
-             (helm-file-completion-source-p))
+             (helm-file-completion-source-p)
+             (file-directory-p helm-ff-default-directory))
     (set-text-properties 0 (length helm-ff-default-directory)
                          nil helm-ff-default-directory)
     (push helm-ff-default-directory helm-ff-history)))

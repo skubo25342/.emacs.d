@@ -1808,7 +1808,8 @@ Call `helm' with only ANY-SOURCES and ANY-BUFFER as args."
   (helm :sources any-sources :buffer any-buffer))
 
 (defun helm-nest (&rest same-as-helm)
-  "Allow calling `helm' whithin a running helm session."
+  "Allow calling `helm' whithin a running helm session.
+Arguments SAME-AS-HELM are the same as `helm', which see."
   (with-helm-window
     (let ((orig-helm-current-buffer helm-current-buffer)
           (orig-helm-buffer helm-buffer)
@@ -1834,7 +1835,7 @@ Call `helm' with only ANY-SOURCES and ANY-BUFFER as args."
           (unless (helm-empty-buffer-p) (helm-mark-current-line t))
           (setq helm-last-frame-or-window-configuration
                 orig-helm-last-frame-or-window-configuration)
-          (setq cursor-type t)
+          (setq cursor-type nil)
           (setq helm-current-buffer orig-helm-current-buffer)
           (setq helm-onewindow-p orig-one-window-p))))))
 
@@ -2216,25 +2217,30 @@ This can be useful for e.g writing quietly a complex regexp."
                "Helm update suspended!"
              "Helm update reenabled!")))
 
+(defvar helm--reading-passwd-or-string nil)
 (defadvice tramp-read-passwd (around disable-helm-update)
   ;; Suspend update when prompting for a tramp password.
   (setq helm-suspend-update-flag t)
   (setq overriding-terminal-local-map nil)
+  (setq helm--reading-passwd-or-string t)
   (let (stimers)
     (unwind-protect
          (progn
            (setq stimers (with-timeout-suspend))
            ad-do-it)
       (with-timeout-unsuspend stimers)
+      (setq helm--reading-passwd-or-string nil)
       (setq helm-suspend-update-flag nil))))
 
 (defun helm--advice-tramp-read-passwd (old--fn &rest args)
   ;; Suspend update when prompting for a tramp password.
   (setq helm-suspend-update-flag t)
   (setq overriding-terminal-local-map nil)
+  (setq helm--reading-passwd-or-string t)
   (unwind-protect
        ;; No need to suspend timer in emacs-24.4
        (apply old--fn args)
+    (setq helm--reading-passwd-or-string nil)
     (setq helm-suspend-update-flag nil)))
 
 (defun helm--maybe-update-keymap ()
@@ -3147,11 +3153,11 @@ Possible value of DIRECTION are 'next or 'previous."
     (if helm-mode-line-string
         (setq mode-line-format
               `(" " mode-line-buffer-identification " "
-                    (:eval (format "L%s" (helm-candidate-number-at-point)))
+                    (:eval (format "L%d" (helm-candidate-number-at-point)))
                     " " ,follow
                     (:eval (when ,helm--mode-line-display-prefarg
-                             (let ((arg (prefix-numeric-value (or prefix-arg
-                                                                  current-prefix-arg))))
+                             (let ((arg (prefix-numeric-value
+                                         (or prefix-arg current-prefix-arg))))
                                (unless (= arg 1)
                                  (propertize (format "[prefarg:%s] " arg)
                                              'face 'helm-prefarg)))))
@@ -3224,18 +3230,21 @@ Key arg DIRECTION can be one of:
         (helm-display-mode-line (helm-get-current-source))
         (helm-log-run-hook 'helm-move-selection-after-hook)))))
 
+(defun helm-move--beginning-of-multiline-candidate ()
+  (let ((header-pos (helm-get-previous-header-pos))
+        (separator-pos (helm-get-previous-candidate-separator-pos)))
+    (when header-pos
+      (goto-char (if (or (null separator-pos)
+                         (< separator-pos header-pos))
+                     header-pos
+                     separator-pos))
+      (forward-line 1))))
+
 (defun helm-move--previous-multi-line-fn ()
   (forward-line -1)
   (unless (helm-pos-header-line-p)
     (helm-skip-header-and-separator-line 'previous)
-    (let ((header-pos (helm-get-previous-header-pos))
-          (separator-pos (helm-get-previous-candidate-separator-pos)))
-      (when header-pos
-        (goto-char (if (or (null separator-pos)
-                           (< separator-pos header-pos))
-                       header-pos
-                     separator-pos))
-        (forward-line 1)))))
+    (helm-move--beginning-of-multiline-candidate)))
 
 (defun helm-move--previous-line-fn ()
   (if (not (helm-pos-multiline-p))
@@ -3319,7 +3328,7 @@ Key arg DIRECTION can be one of:
 
 (defun helm-candidate-number-at-point ()
   (with-helm-buffer
-    (get-text-property (point) 'helm-cand-num)))
+    (or (get-text-property (point) 'helm-cand-num) 1)))
 
 (defun helm--next-or-previous-line (direction &optional arg)
   ;; Be sure to not use this in non--interactives calls.
@@ -3432,24 +3441,28 @@ send in minibuffer confirm message and exit on next hit.
 If `minibuffer-completion-confirm' value is t,
 don't exit and send message 'no match'."
   (interactive)
-  (let* ((empty-buffer-p (with-current-buffer helm-buffer
-                           (eq (point-min) (point-max))))
-         (unknown (and (not empty-buffer-p)
-                       (string= (get-text-property
-                                 0 'display (helm-get-selection nil 'withprop))
-                                "[?]"))))
-    (cond ((and (or empty-buffer-p unknown)
-                (eq minibuffer-completion-confirm 'confirm))
-           (setq helm-minibuffer-confirm-state
-                 'confirm)
-           (setq minibuffer-completion-confirm nil)
-           (minibuffer-message " [confirm]"))
-          ((and (or empty-buffer-p unknown)
-                (eq minibuffer-completion-confirm t))
-           (minibuffer-message " [No match]"))
-          (t
-           (setq helm-minibuffer-confirm-state nil)
-           (helm-exit-minibuffer)))))
+  (if (and (helm--updating-p)
+           (null helm--reading-passwd-or-string))
+      (progn (message "[Display not ready]")
+             (sit-for 0.5) (message nil))
+      (let* ((empty-buffer-p (with-current-buffer helm-buffer
+                               (eq (point-min) (point-max))))
+             (unknown (and (not empty-buffer-p)
+                           (string= (get-text-property
+                                     0 'display (helm-get-selection nil 'withprop))
+                                    "[?]"))))
+        (cond ((and (or empty-buffer-p unknown)
+                    (eq minibuffer-completion-confirm 'confirm))
+               (setq helm-minibuffer-confirm-state
+                     'confirm)
+               (setq minibuffer-completion-confirm nil)
+               (minibuffer-message " [confirm]"))
+              ((and (or empty-buffer-p unknown)
+                    (eq minibuffer-completion-confirm t))
+               (minibuffer-message " [No match]"))
+              (t
+               (setq helm-minibuffer-confirm-state nil)
+               (helm-exit-minibuffer))))))
 (add-hook 'helm-after-update-hook 'helm-confirm-and-exit-hook)
 
 (defun helm-confirm-and-exit-hook ()
@@ -3459,13 +3472,20 @@ don't exit and send message 'no match'."
     (setq minibuffer-completion-confirm
           helm-minibuffer-confirm-state)))
 
+(defun helm-read-string (prompt &optional initial-input history
+                                  default-value inherit-input-method)
+  (let ((helm--reading-passwd-or-string t))
+    (read-string
+     prompt initial-input history default-value inherit-input-method)))
+
 (defun helm--updating-p ()
   ;; helm timer is between two cycles.
   (not (string= (minibuffer-contents) helm-pattern)))
 
 (defun helm-maybe-exit-minibuffer ()
   (interactive)
-  (if (helm--updating-p)
+  (if (and (helm--updating-p)
+           (null helm--reading-passwd-or-string))
       (progn (message "[Display not ready]")
              (sit-for 0.5) (message nil))
       (helm-exit-minibuffer)))
@@ -3568,6 +3588,8 @@ to a list of forms.\n\n")
         (or (re-search-forward candidate-or-regexp nil t)
             (goto-char start))))
     (forward-line 0) ; Avoid scrolling right on long lines.
+    (when (helm-pos-multiline-p)
+      (helm-move--beginning-of-multiline-candidate))
     (helm-mark-current-line)))
 
 (defun helm-delete-current-selection ()
