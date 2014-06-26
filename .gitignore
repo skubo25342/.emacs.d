@@ -1,6 +1,10 @@
 *.elc
 auto-save-list/
+server/
 tramp
+eshell/
+url/
+image-dired/
 recentf
 .windows
 ac-comphist.dat
