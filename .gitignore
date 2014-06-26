@@ -1,4 +1,5 @@
 *.elc
 auto-save-list/
+tramp
 recentf
 ac-comphist.dat
