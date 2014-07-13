@@ -67,7 +67,7 @@
 ;;;;;;  image-dired-dired-toggle-marked-thumbs image-dired-dired-insert-marked-thumbs
 ;;;;;;  diredp-wrap-around-flag diredp-w32-local-drives diredp-prompt-for-bookmark-prefix-flag
 ;;;;;;  diff-switches diredp-image-preview-in-tooltip diredp-auto-focus-frame-for-thumbnail-tooltip-flag)
-;;;;;;  "dired+" "dired+.el" (21432 10988 0 0))
+;;;;;;  "dired+" "dired+.el" (21442 11862 0 0))
 ;;; Generated autoloads from dired+.el
 
 (defvar diredp-auto-focus-frame-for-thumbnail-tooltip-flag nil "\
@@ -118,6 +118,8 @@ name and DESCRIPTION describes DRIVE.")
 *Non-nil means Dired \"next\" commands wrap around to buffer beginning.")
 
 (custom-autoload 'diredp-wrap-around-flag "dired+" t)
+
+(unless (fboundp 'define-minor-mode) (defcustom diredp-highlight-autofiles-mode t "*Non-nil means highlight names of files that are autofile bookmarks.\nAutofiles that have tags are highlighted using face\n`diredp-tagged-autofile-name'.  Those with no tags are highlighted\nusing face `diredp-autofile-name'.\n\nSetting this option directly does not take effect; use either\n\\[customize] or command `diredp-highlight-autofiles-mode'.\n\nNOTE: When `dired+.el' is loaded (for the first time per Emacs\nsession), the highlighting is turned ON, regardless of the option\nvalue.  To prevent this and have the highlighting OFF by default, you\nmust do one of the following:\n\n * Put (diredp-highlight-autofiles-mode -1) in your init file, AFTER\n   it loads `dired+.el'.\n\n * Customize the option to `nil', AND ensure that your `custom-file'\n   (or the `custom-saved-variables' part of your init file) is\n   evaluated before `dired+.el' is loaded.\n\nThis option has no effect unless you use libraries `Bookmark and\n`highlight.el'." :set (lambda (symbol value) (diredp-highlight-autofiles-mode (if value 1 -1))) :initialize 'custom-initialize-default :type 'boolean :group 'Dired-Plus :require 'dired+))
 
 (autoload 'image-dired-dired-insert-marked-thumbs "dired+" "\
 Insert thumbnails before file names of marked files in the Dired buffer.
@@ -1692,7 +1694,7 @@ Send a bug report about a Dired+ problem.
 
 ;;;***
 
-;;;### (autoloads nil nil ("dired+-pkg.el") (21432 10988 867261 0))
+;;;### (autoloads nil nil ("dired+-pkg.el") (21442 11862 932248 0))
 
 ;;;***
 
