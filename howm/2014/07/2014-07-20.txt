@@ -1,0 +1,38 @@
+= [Emacs][Mac] markdown-mode
+
+GithubとかQiitaなどで用いられているマークアップ言語Markdownを利用してみようと思いたち，markdown-modeを使ってみる。Githubを使い始めたとき(あるいはデフォルト?)にmarkdown-modeが導入してあったので，すぐに使えた。Markdownの記法を覚えないとどうしようもない感じだが…。
+
+markdown-modeはTeXなどと同じように，マークアップした後にHTML形式に変換しないとGithubなどで見られる形式にはならない。というわけでmarkdown -> HTMLの変換コマンド"markdown"をHomebrewでインストール。
+	% brew install markdown
+やはりbrew便利。これだけでmarkdown -> HTML変換はOK。ただ，いちいち変換してブラウザで更新しなければならないので，多少面倒である。Emacs内部でmarkdownのプレビューができるか，自動更新ができるといいのだけれど。
+
+探してみると，いくつか出てくる。最初に見つけたのがnode.jsのツール"markup"で，markdownのレンダリングにGithub APIを用いている。導入は以下の通り。
+	% brew install node
+	% cd ~/local/share/node_modules
+	% npm install markup
+	% cd ~/local/bin
+	% ln -s ../share/node_modules/.bin/markup
+これで，以下のようにmarkdownファイルを監視する。
+	% markup hoge.md 3000
+ブラウザで"http://localhost:3000"にアクセスすると，hoge.mdを保存するたびに更新されるはず。しかしうまくいかなかった…。
+ref: markdown のリアルタイムレンダリングツール markup をリリースしました - Block Rockin’ Codes --- http://jxck.hatenablog.com/entry/20120825/1345887758
+ref: EmacsでMarkdownのプレビューをお手軽に確認する方法はこれかな？ / マスタカの ChangeLog メモ --- http://masutaka.net/chalow/2012-11-23-1.html
+
+markupは諦め，次に見つけたのが同じようなツールWarp。こちらはEmacsからnode.jsを使ってmarkupと同じ機能を実現しているようす。node.jsが必要だが，上で導入してあるので省略。Githubにあるリポジトリをcloneしてインストール。
+	% cd ~/.emacs.d/elisp
+	% git clone http://github.com/yukihr/warp.git
+	% cd warp
+	% npm install
+OS依存かマシン依存の可能性があるので，.emacs.dにはインストールしないほうがいいのかも。あるいは.gitignoreでリモートリポジトリに反映されなようにするとか(要確認)。あとはinit.elに
+	(add-to-list 'load-path "~/.emacs.d/elisp/warp/")
+	(require 'warp)
+	(add-to-list 'warp-format-converter-alist
+		     '("\\.md" t (lambda ()
+		     	       	 '("markdown"))))
+と記述して完了。自動更新したいファイルでM-x warp-modeとするとwarp-format-converter-alistに設定されたコマンドを使ってHTMLに変換した後，ブラウザでプレビューが始まる。試しに編集してみると，ほぼリアルタイムに更新されているので満足。更新をストップさせるには，M-x warp-stop-server (C-c C-w i)でOK。
+ref: Warp - EmacsからリアルタイムにHTMLやmarkdownをブラウザプレビュー - kotatu.org --- http://kotatu.org/blog/2012/04/07/realtime-html-preview-with-emacs/
+
+このメモはhowmで書いてるわけだが，Markdown形式で書けないかなぁ…。
+
+[2014-07-20 11:28] 
+
