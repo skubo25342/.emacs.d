@@ -257,16 +257,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Markdown
-(autoload 'markdown-mode "markdown-mode" "Major mode for editing Markdown files" t)
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-;;; Warp
-;;; Realtime rendering & preview tool for Markdown
-;;; ref: http://kotatu.org/blog/2012/04/07/realtime-html-preview-with-emacs/
-(add-to-list 'load-path "~/.emacs.d/elisp/warp/")
-(require 'warp)
-(add-to-list 'warp-format-converter-alist
-	     '("\\.md" t (lambda ()
-			   '("markdown"))))
+(load "markdown-init")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
