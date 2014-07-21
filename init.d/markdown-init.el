@@ -20,7 +20,8 @@
 (require 'warp)
 (add-to-list 'warp-format-converter-alist
 	     '("\\.md" t (lambda ()
-			   '("markdown"))))
-
+			   '("markdown")
+;			   (list "pandoc" "-f" "markdown" "-t" "html5" "-c" (expand-file-name "~/.emacs.d/markdown.css") "-s" "-S")
+			   )))
 
 ;;;;; markdown-init.el ends here
