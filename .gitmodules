@@ -1,0 +1,3 @@
+[submodule "elisp/warp"]
+	path = elisp/warp
+	url = git://github.com/yukihr/warp.git
