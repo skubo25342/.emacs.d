@@ -13,19 +13,24 @@
 ;;;; ref: http://stackoverflow.com/questions/11403862/how-to-have-emacs-helm-list-offer-files-in-current-directory-as-options
 ;;;; ref: http://qiita.com/hottestseason/items/1e8a46ad1ebcf7d0e11c#2-7
 (when (require 'helm-config nil t)
+  ;;; helm extensions
+  (require 'helm-ls-git)
   ;;; Enable helm-mode
   (helm-mode 1)
   ;;; Customized helm menu
-  ;;; Type "C-h v helm-c-source" to find available sources
+  ;;; Type "C-h v helm-source" to find available sources
   (defun my-helm ()
     (interactive)
-    (helm :sources '(helm-c-source-buffers-list
-		     helm-c-source-buffer-not-found
-		     helm-c-source-recentf
-		     helm-c-source-files-in-current-dir
-		     helm-c-source-google-suggest)
+    (helm :sources '(helm-source-buffers-list
+		     helm-source-buffer-not-found
+		     helm-source-files-in-current-dir
+		     helm-source-ls-git
+		     helm-source-ls-git-status
+		     helm-source-recentf
+		     helm-source-google-suggest)
 	  :buffer "*helm*"))
   (define-key global-map "\C-x\C-a" 'my-helm)
+  (define-key global-map "\C-s" 'helm-do-ag)
   ;;; helm displaying function
   (defun helm-display-buffer (buffer)
     (split-window-vertically)
