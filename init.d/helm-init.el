@@ -29,8 +29,8 @@
 		     helm-source-recentf
 		     helm-source-google-suggest)
 	  :buffer "*helm*"))
-  (define-key global-map "\C-x\C-a" 'my-helm)
-  (define-key global-map "\C-s" 'helm-do-ag)
+  (define-key global-map (kbd "C-x C-a") 'my-helm)
+  (define-key global-map (kbd "C-S-s") 'helm-do-ag)
   ;;; helm displaying function
   (defun helm-display-buffer (buffer)
     (split-window-vertically)
