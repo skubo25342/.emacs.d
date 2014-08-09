@@ -1,0 +1,33 @@
+;; Object example/
+;; SEMANTICDB Tags save file
+(semanticdb-project-database-file "example/"
+  :tables (list 
+   (semanticdb-table "App.java"
+    :major-mode 'malabar-mode
+    :tags 
+        '( ("com.example" package nil (reparse-symbol package_declaration) [1 21])
+            ("App" type
+               (:typemodifiers ("public")
+                :members 
+                  ( ("main" function
+                       (:typemodifiers ("public" "static")
+                        :arguments 
+                          ( ("args" variable
+                               (:dereference 1
+                                :type "String")
+                                (reparse-symbol formal_parameter) [99 112]))                          
+                        :type "void")
+                        (reparse-symbol method_declaration) [74 354]))                  
+                :type "class")
+                (reparse-symbol class_declaration) [50 356]))          
+    :file "App.java"
+    :pointmax 357
+    :fsize 356
+    :lastmodtime '(21478 10806 0 0)
+    :unmatched-syntax 'nil
+    )
+   )
+  :file "!Users!kubo_shosei!tmp!sample!src!main!java!com!example!semantic.cache"
+  :semantic-tag-version "2.0"
+  :semanticdb-version "2.2"
+  )

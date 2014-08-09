@@ -1,0 +1,42 @@
+;; Object example/
+;; SEMANTICDB Tags save file
+(semanticdb-project-database-file "example/"
+  :tables (list 
+   (semanticdb-table "AppTest.java"
+    :major-mode 'malabar-mode
+    :tags 
+        '( ("com.example" package nil (reparse-symbol package_declaration) [1 21])
+            ("junit.framework.Test" include nil (reparse-symbol import_declaration) [23 51])
+            ("junit.framework.TestCase" include nil (reparse-symbol import_declaration) [52 84])
+            ("junit.framework.TestSuite" include nil (reparse-symbol import_declaration) [85 118])
+            ("AppTest" type
+               (:typemodifiers ("public")
+                :superclasses "TestCase"
+                :members 
+                  ( ("AppTest" function
+                       (:constructor-flag t
+                        :typemodifiers ("public")
+                        :arguments 
+                          ( ("testName" variable (:type "String") (reparse-symbol formal_parameter) [318 333]))                          )
+                        (reparse-symbol constructor_declaration) [302 374])
+                    ("suite" function
+                       (:typemodifiers ("public" "static")
+                        :type "Test")
+                        (reparse-symbol method_declaration) [443 528])
+                    ("testApp" function
+                       (:typemodifiers ("public")
+                        :type "void")
+                        (reparse-symbol method_declaration) [576 637]))                  
+                :type "class")
+                (reparse-symbol class_declaration) [157 639]))          
+    :file "AppTest.java"
+    :pointmax 640
+    :fsize 639
+    :lastmodtime '(21477 58007 0 0)
+    :unmatched-syntax 'nil
+    )
+   )
+  :file "!Users!kubo_shosei!tmp!sample!src!test!java!com!example!semantic.cache"
+  :semantic-tag-version "2.0"
+  :semanticdb-version "2.2"
+  )
