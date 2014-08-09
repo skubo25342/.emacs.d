@@ -77,6 +77,11 @@
 ;;; Using integer or decimal value set line spacing in absolute pixels, or in relative to line height, respectively.
 (setq-default line-spacing 0.1)
 
+;;;; Cursor
+;;;; 0: No blink
+;;;; Non 0: Blink
+(blink-cursor-mode 0)
+
 ;;;; Toolbar
 ;;; Hide toolbar
 ;;; ref: http://milanista224.blogspot.jp/2012/08/retina-emacs24.html
