@@ -30,7 +30,7 @@
 		      :dedicated t))
 		   popwin:special-display-config))
      ;;; popwin for YaTeX
-     (add-to-list 'load-path "~/.emacs.d/elisp/popwin")
+     ;(add-to-list 'load-path "~/.emacs.d/elisp/popwin")
      (eval-after-load "yatex"
        '(progn
 	  (require 'popwin-yatex nil t)))

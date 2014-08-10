@@ -44,16 +44,17 @@
 ;;;; load-path
 ;;; Define function adding load-path
 ;;; Ref: http://sky-y.hatenablog.jp/entry/20111224/1324714853
-;(defun add-to-load-path (&rest paths)
-;  (let (path)
-;    (dolist (path paths paths)
-;      (let ((default-directory (expand-file-name (concat user-emacs-directory path))))
-;	(add-to-list 'load-path default-directory)
-;	(if (fboundp 'normal-top-level-add-subdir-to-load-path)
-;	    (normal-top-level-add-subdirs-to-load-path))))))
+(defun add-to-load-path (&rest paths)
+  (let (path)
+    (dolist (path paths paths)
+      (let ((default-directory (expand-file-name (concat user-emacs-directory path))))
+	(add-to-list 'load-path default-directory)
+	(if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+	    (normal-top-level-add-subdirs-to-load-path)
+	  (message "[add-to-load-path]: normal-top-level-add-subdirs-to-load-path is void."))))))
 ;;; Add to load-path
-;(add-to-load-path "elisp")
-(add-to-list 'load-path "~/.emacs.d/elisp")
+(add-to-load-path "elisp" "elpa")
+;(add-to-list 'load-path "~/.emacs.d/elisp")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 

@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(add-to-list 'load-path "~/.emacs.d/elisp/howm/howm-1.4.2")
+;(add-to-list 'load-path "~/.emacs.d/elisp/howm/howm-1.4.2")
 ;;;; Title header
 ;;; This must be evaluated before load howm.
 (defvar howm-view-title-header "#")

@@ -9,7 +9,7 @@
 
 ;;;; yahtml.el
 ;;;; Ref: http://www.yatex.org/
-(add-to-list 'load-path "~/.emacs.d/elisp/yatex/yatex1.77")
+;(add-to-list 'load-path "~/.emacs.d/elisp/yatex/yatex1.77")
 (autoload 'yahtml-mode "yahtml" "Yet Another HTML mode" t)
 (add-to-list 'auto-mode-alist '("\\.html\\'" . yahtml-mode))
 (eval-after-load "yahtml"
