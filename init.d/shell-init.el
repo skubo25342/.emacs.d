@@ -1,11 +1,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;; 
+;;;;;
 ;;;;; shell-init.el
-;;;;; 
+;;;;;
 ;;;;; Author: Shosei KUBO
-;;;;; 
-;;;;; ref: http://sakito.jp/emacs/emacsshell.html
-;;;;; 
+;;;;;
+;;;;; Ref: http://sakito.jp/emacs/emacsshell.html
+;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -18,14 +18,16 @@
 (add-hook 'shell-mode-hook
 	  '(lambda ()
 	     (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix)))
+
 ;;;; multi-term.el (installed via elpa)
-;;;; ref: http://stackoverflow.com/questions/6820051/unicode-characters-in-emacs-term-mode
-(when (require 'multi-term nil t)
-  (setq multi-term-program shell-file-name)
-  (setq system-uses-terminfo nil)
-  (add-hook 'term-exec-hook
-	    '(lambda ()
-	       (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))))
+;;;; Ref: http://stackoverflow.com/questions/6820051/unicode-characters-in-emacs-term-mode
+(eval-after-load "multi-term"
+  '(progn
+     (setq multi-term-program shell-file-name)
+     (setq system-uses-terminfo nil)
+     (add-hook 'term-exec-hook
+	       '(lambda ()
+		  (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix)))))
 
 
 ;;;;; shell-init.el ends here

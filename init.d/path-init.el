@@ -1,11 +1,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;; 
+;;;;;
 ;;;;; path-init.el
-;;;;; 
+;;;;;
 ;;;;; Author: Shosei KUBO
-;;;;; 
-;;;;; ref: http://sakito.jp/emacs/emacsshell.html
-;;;;; 
+;;;;;
+;;;;; Ref: http://sakito.jp/emacs/emacsshell.html
+;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -14,18 +14,17 @@
  ;;; For Mac
  (ns-p
   ;;; exec-path-from-shell.el (installed via elpa) (for Mac)
-  ;;; ref: https://github.com/purcell/exec-path-from-shell
-  ;;; ref: http://qiita.com/catatsuy/items/3dda714f4c60c435bb25
-  ;;; ref: http://qiita.com/hottestseason/items/1e8a46ad1ebcf7d0e11c#2-38
+  ;;; Ref: https://github.com/purcell/exec-path-from-shell
+  ;;; Ref: http://qiita.com/catatsuy/items/3dda714f4c60c435bb25
+  ;;; Ref: http://qiita.com/hottestseason/items/1e8a46ad1ebcf7d0e11c#2-38
   ;;; Set exec-path and PATH as same as Mac's PATH
-  (when (require 'exec-path-from-shell)
-    (exec-path-from-shell-initialize)))
+  (exec-path-from-shell-initialize))
  ;;; For windows
  (windows-p
-  (setq path (list ;"/app/script"
-		   "/cygdrive/c/usr/local/W32TeX/bin"
-		   "/cygdrive/c/dviout"
-		   "/cygdrive/c/Program Files (x86)/gnuplot/binary"))
+  (setq path '(;"/app/script"
+	       "/cygdrive/c/usr/local/W32TeX/bin"
+	       "/cygdrive/c/dviout"
+	       "/cygdrive/c/Program Files (x86)/gnuplot/binary"))
   ;;; Splitter between each directories
   (setq path-directory-splitter ";")
   (dolist (dir path)

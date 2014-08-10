@@ -1,18 +1,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;; 
+;;;;;
 ;;;;; init-unused.el
-;;;;; 
+;;;;;
 ;;;;; Author: Shosei KUBO
-;;;;; 
+;;;;;
 ;;;;; This elisp file is for unused (old) settings. DO NOT LOAD!
-;;;;; 
+;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Colors
-;;;; ref: http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html
-;;;; ref: http://milanista224.blogspot.jp/2012/08/retina-emacs24.html
+;;;; Ref: http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html
+;;;; Ref: http://milanista224.blogspot.jp/2012/08/retina-emacs24.html
 (if window-system
     (progn
       (set-face-foreground 'region "white")
@@ -31,7 +31,7 @@
 ;;;; hbar : Underline
 ;;;; (hbar . n) : Underline (height: n pt)
 ;;;; hollow : (Other cases) Non-filled box
-;;;; ref: http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html
+;;;; Ref: http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html
 (add-to-list 'default-frame-alist '(cursor-type . 'box))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -39,8 +39,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; mic-paren.el
 ;;;; Highlight parenthesis
-;;;; ref: http://www.emacswiki.org/emacs/mic-paren.el
-;;;; ref: http://pastelwill.jp/wiki/doku.php?id=emacs:init.el
+;;;; Ref: http://www.emacswiki.org/emacs/mic-paren.el
+;;;; Ref: http://pastelwill.jp/wiki/doku.php?id=emacs:init.el
 (when (require 'mic-paren nil t)
   (paren-activate))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -49,8 +49,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; wb-line-number.el
 ;;;; Show line number on left
-;;;; ref: http://homepage1.nifty.com/blankspace/emacs/wb-line-number.html
-;;;; ref: http://www-section.cocolog-nifty.com/blog/emacs/index.html
+;;;; Ref: http://homepage1.nifty.com/blankspace/emacs/wb-line-number.html
+;;;; Ref: http://www-section.cocolog-nifty.com/blog/emacs/index.html
 (require 'wb-line-number)
 (wb-line-number-toggle)
 (setq truncate-partial-width-windows nil)
@@ -63,8 +63,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; word-count.el
-;;;; ref: http://www.emacswiki.org/emacs/WordCount
-;;;; ref: http://pastelwill.jp/wiki/doku.php?id=emacs:init.el
+;;;; Ref: http://www.emacswiki.org/emacs/WordCount
+;;;; Ref: http://pastelwill.jp/wiki/doku.php?id=emacs:init.el
 (eval-after-autoload-if-found '(word-count-mode) "word-count" "Minor mode to count words." t)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -140,9 +140,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; anything.el (for Mac only)
-;;;; ref: http://www.emacswiki.org/cgi-bin/wiki/Anything
-;;;; ref: http://www24.atwiki.jp/anything/m/pages/13.html
-;;;; ref: http://dev.ariel-networks.com/Members/matsuyama/open-anything-emacs/
+;;;; Ref: http://www.emacswiki.org/cgi-bin/wiki/Anything
+;;;; Ref: http://www24.atwiki.jp/anything/m/pages/13.html
+;;;; Ref: http://dev.ariel-networks.com/Members/matsuyama/open-anything-emacs/
 (cond
  ;;; for Mac
  ((eq window-system 'ns)
@@ -173,7 +173,7 @@
   ;;; Candidate number limit (default: 50)
   (setq anything-candidate-number-limit 100)
   ;;; Set keybind
-  (define-key global-map "\C-x\C-a" 'anything)
+  (define-key global-map (kbd "C-x C-a") 'anything)
   )
  ;;; for Windows
  ((eq window-system 'w32)
