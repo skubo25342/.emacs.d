@@ -100,12 +100,11 @@
 ;;; Show current time on mode line (default: disable)
 ;;; Ref: http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html
 ;;; Ref: http://milanista224.blogspot.jp/2012/08/retina-emacs24.html
-(require 'time nil t)
+(display-time-mode t)
 (eval-after-load "time"
   '(progn
      (setq display-time-24hr-format t)
      (setq display-time-string-forms '(24-hours ":" minutes))))
-(display-time-mode t)
 ;;; Show battery status on mode line (default: disable)
 ;;; Can't enable on Mac OS X Maveriks (@2013.12.23)
 ;;; Ref: http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html

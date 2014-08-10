@@ -19,10 +19,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Advices
-;(defun autoload-if-found (function file &optional docstring interactive type)
-;  "Set autoload if file has found."
-;  (and (locate-library file)
-;       (autoload function file docstring interactive type)))
 (defadvice autoload (around autoload:if-found activate)
   "Set autoload if file has found."
   (let ((functions (ad-get-arg 0))
@@ -68,14 +64,13 @@
 ;;;; To install a package <package_name>, type "M-x package-install RET <package_name> RET".
 ;;;; To refresh package infomation, type "M-x package-refresh-contents RET".
 ;;;; To show packages list, type "M-x package-list-packages RET" (with doing package-refresh-contents) or "M-x package-list-packages-no-fetch" (without doing package-refresh-contents).
-(require 'package nil t)
+(package-initialize)
 (eval-after-load "package"
   '(progn
      ;;; Repository: MELPA
      (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
      ;;; Repository: Marmalade
-     (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-     (package-initialize)))
+     (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 

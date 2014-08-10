@@ -20,7 +20,7 @@
 (eval-after-load "warp"
   '(progn
      (add-to-list 'warp-format-converter-alist
-		  '("\\.md" t (lambda ()
+		  '("\\.md\\'" t (lambda ()
 				'("markdown")
 ;				(list "pandoc" "-f" "markdown" "-t" "html5" "-c" (expand-file-name "~/.emacs.d/markdown.css") "-s" "-S")
 				)))))

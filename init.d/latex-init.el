@@ -11,11 +11,8 @@
 ;;;; Ref: http://www.yatex.org/
 ;;;; Ref: http://www.nk.rim.or.jp/~naru/yatex/startup.html
 ;;;; Ref: http://www.proton.jp/main/latex/yatex.html
-;;; Add to load-path
 (add-to-list 'load-path "~/.emacs.d/elisp/yatex/yatex1.77")
-;;; Auto load
 (autoload 'yatex-mode "yatex" "Yet Another LaTeX mode" t)
-;;; Open with yatex-mode
 (setq auto-mode-alist
       (append '(("\\.tex\\'" . yatex-mode)
 		("\\.cls\\'" . yatex-mode)
