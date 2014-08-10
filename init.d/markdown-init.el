@@ -15,7 +15,6 @@
 ;;;; Warp
 ;;;; Realtime rendering & preview tool for Markdown
 ;;;; Ref: http://kotatu.org/blog/2012/04/07/realtime-html-preview-with-emacs/
-;(add-to-list 'load-path "~/.emacs.d/elisp/warp/")
 (autoload 'warp-mode "warp" "Warp" t)
 (eval-after-load "warp"
   '(progn

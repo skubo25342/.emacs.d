@@ -12,7 +12,6 @@
 ;;;; Ref: http://technique.sonots.com/?UNIX%2F%E5%AD%A6%E7%94%9F%E3%83%84%E3%83%BC%E3%83%AB%2Felisp%2Fwindows.el
 ;;;; Ref: http://www.bookshelf.jp/soft/meadow_30.html#SEC407
 ;;;; Ref: http://d.hatena.ne.jp/kobapan/20100126/1264459661
-;(add-to-list 'load-path "~/.emacs.d/elisp/windows")
 (require 'windows nil t)
 (eval-after-load "windows"
   '(progn

@@ -50,11 +50,9 @@
       (let ((default-directory (expand-file-name (concat user-emacs-directory path))))
 	(add-to-list 'load-path default-directory)
 	(if (fboundp 'normal-top-level-add-subdirs-to-load-path)
-	    (normal-top-level-add-subdirs-to-load-path)
-	  (message "[add-to-load-path]: normal-top-level-add-subdirs-to-load-path is void."))))))
+	    (normal-top-level-add-subdirs-to-load-path))))))
 ;;; Add to load-path
 (add-to-load-path "elisp" "elpa")
-;(add-to-list 'load-path "~/.emacs.d/elisp")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
