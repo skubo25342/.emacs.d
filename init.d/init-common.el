@@ -26,10 +26,9 @@
     (when (not (listp functions))
       (setq functions (list functions)))
     (if (locate-library file)
-	(progn
-	  (dolist (function functions)
-	    (ad-set-arg 0 function)
-	    ad-do-it))
+	(dolist (function functions)
+	  (ad-set-arg 0 function)
+	  ad-do-it)
       (message "[autoload]: %s.el(c) was not found." file))))
 (defadvice require (around require:if-found activate)
   "Require feature if file has found."

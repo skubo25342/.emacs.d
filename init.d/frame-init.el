@@ -47,6 +47,10 @@
 ;;; Apply the initial setting to default
 (setq default-frame-alist initial-frame-alist)
 
+;;; Fullscreen mode (for Mac only)
+(if ns-p
+    (add-hook 'after-init-hook 'toggle-frame-fullscreen))
+
 ;;;; Frame title
 ;;;; %b : Buffer title
 ;;;; %f : File path
