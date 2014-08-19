@@ -12,7 +12,8 @@
 ;;;; calfw.el (installed via elpa) (not for Windows)
 ;;;; Ref: http://d.hatena.ne.jp/kiwanami/20110107/1294404952
 ;;;; Ref: http://d.hatena.ne.jp/kiwanami/20110723/1311434175
-(require 'calfw nil t)
+(if (not windows-p)
+    (require 'calfw nil t))
 (eval-after-load "calfw"
   '(progn
      (when (and (require 'calfw-ical nil t)

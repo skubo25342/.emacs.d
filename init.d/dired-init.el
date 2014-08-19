@@ -13,7 +13,8 @@
      ;;;; Ref: http://d.hatena.ne.jp/kakurasan/20070702/p1
      ;;;; Ref: http://www.emacswiki.org/emacs/DiredPlus
      ;;;; Ref: http://qiita.com/hottestseason/items/1e8a46ad1ebcf7d0e11c#2-47
-     (require 'dired+ nil t)
+     (if (not windows-p)
+	 (require 'dired+ nil t))
      ;;;; Enable disabled command dired-find-alternate-file
      (put 'dired-find-alternate-file 'disabled nil)
      ;;;; Key bindings

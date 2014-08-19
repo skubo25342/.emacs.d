@@ -120,7 +120,8 @@
 ;;; Customize mode line style
 ;;; Ref: http://qiita.com/hottestseason/items/1e8a46ad1ebcf7d0e11c#2-53
 ;;; Ref: http://shibayu36.hatenablog.com/entry/2014/02/11/160945
-(powerline-default-theme)
+(if (not windows-p)
+    (powerline-default-theme))
 (eval-after-load "powerline"
   '(progn
 ;     (set-face-attribute 'mode-line nil
