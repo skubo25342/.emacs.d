@@ -21,8 +21,9 @@
 				 helm-source-buffer-not-found
 				 helm-source-files-in-current-dir
 				 ,@(when (require 'helm-ls-git nil t)
-				     '(helm-source-ls-git
-				       helm-source-ls-git-status))
+;				     '(helm-source-ls-git
+;				     helm-source-ls-git-status)
+				 )
 				 helm-source-recentf
 				 helm-source-google-suggest))
      (defun my-helm ()
