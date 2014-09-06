@@ -79,29 +79,21 @@
     (define-key map (kbd "C-d")   'helm-bookmark-run-delete)
     (define-key map (kbd "C-]")   'helm-bookmark-toggle-filename)
     (define-key map (kbd "M-e")   'helm-bookmark-run-edit)
-    (when (locate-library "bookmark-extensions")
-      (define-key map (kbd "M-F") 'helm-bmkext-run-sort-by-frequency)
-      (define-key map (kbd "M-V") 'helm-bmkext-run-sort-by-last-visit)
-      (define-key map (kbd "M-A") 'helm-bmkext-run-sort-alphabetically))
     (define-key map (kbd "C-c ?") 'helm-bookmark-help)
-    (delq nil map))
+    map)
   "Generic Keymap for emacs bookmark sources.")
 
-(defvar helm-bookmarks-cache nil)
+(defclass helm-source-basic-bookmarks (helm-source-in-buffer helm-type-bookmark)
+   ((init :initform (lambda ()
+                      (bookmark-maybe-load-default-file)
+                      (helm-init-candidates-in-buffer
+                          'global
+                        (bookmark-all-names))))
+    (filtered-candidate-transformer :initform 'helm-bookmark-transformer)
+    (search :initform 'helm-bookmark-search-fn)))
+
 (defvar helm-source-bookmarks
-  '((name . "Bookmarks")
-    (init . (lambda ()
-              (require 'bookmark)
-              (setq helm-bookmark-mode-line-string
-                    (list (car helm-bookmark-mode-line-string)
-                          (replace-regexp-in-string "Sort:\\[.*\\] " ""
-                                                    (cadr helm-bookmark-mode-line-string))))                          
-              (setq helm-bookmarks-cache
-                    (bookmark-all-names))))
-    (candidates . helm-bookmarks-cache)
-    (filtered-candidate-transformer . helm-bookmark-transformer)
-    (match . helm-bookmark-match-fn)
-    (type . bookmark))
+  (helm--make-source "Bookmarks" 'helm-source-basic-bookmarks)
   "See (info \"(emacs)Bookmarks\").")
 
 (defun helm-bookmark-transformer (candidates _source)
@@ -167,11 +159,7 @@
 (defvar helm-source-pp-bookmarks
   '((name . "PP-Bookmarks")
     (init . (lambda ()
-              (require 'bookmark)
-              (setq helm-bookmark-mode-line-string
-                    (list (car helm-bookmark-mode-line-string)
-                          (replace-regexp-in-string "Sort:\\[.*\\] " ""
-                                                    (cadr helm-bookmark-mode-line-string))))
+              (bookmark-maybe-load-default-file)
               (helm-init-candidates-in-buffer
                   'global (cl-loop for b in (bookmark-all-names) collect
                                 (propertize b 'location (bookmark-location b))))))
@@ -709,15 +697,15 @@ words from the buffer into the new bookmark name."
 ;;
 (define-helm-type-attribute 'bookmark
     `((coerce . helm-bookmark-get-bookmark-from-name)
-      (action
-       ("Jump to bookmark" . helm-bookmark-jump)
-       ("Jump to BM other window" . helm-bookmark-jump-other-window)
-       ("Bookmark edit annotation" . bookmark-edit-annotation)
-       ("Bookmark show annotation" . bookmark-show-annotation)
-       ("Delete bookmark(s)" . helm-delete-marked-bookmarks)
-       ("Edit Bookmark" . helm-bookmark-edit-bookmark)
-       ("Rename bookmark" . helm-bookmark-rename)
-       ("Relocate bookmark" . bookmark-relocate))
+      (action . ,(helm-make-actions
+                  "Jump to bookmark" 'helm-bookmark-jump
+                  "Jump to BM other window" 'helm-bookmark-jump-other-window
+                  "Bookmark edit annotation" 'bookmark-edit-annotation
+                  "Bookmark show annotation" 'bookmark-show-annotation
+                  "Delete bookmark(s)" 'helm-delete-marked-bookmarks
+                  "Edit Bookmark" 'helm-bookmark-edit-bookmark
+                  "Rename bookmark" 'helm-bookmark-rename
+                  "Relocate bookmark" 'bookmark-relocate))
       (keymap . ,helm-bookmark-map)
       (mode-line . helm-bookmark-mode-line-string))
   "Bookmark name.")

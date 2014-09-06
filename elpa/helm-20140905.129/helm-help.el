@@ -575,9 +575,6 @@ your regexp is ready to send to remote process.
 \\[helm-bookmark-run-jump-other-window]\t\t->Jump other window.
 \\[helm-bookmark-run-delete]\t\t->Delete bookmark.
 \\[helm-bookmark-run-edit]\t\t->Edit bookmark.
-\\[helm-bmkext-run-sort-by-frequency]\t\t->Sort by frequency (only for bmkext).
-\\[helm-bmkext-run-sort-by-last-visit]\t\t->Sort by last visited (only for bmkext).
-\\[helm-bmkext-run-sort-alphabetically]\t\t->Sort alphabetically (only for bmkext).
 \\[helm-bookmark-toggle-filename]\t\t->Toggle bookmark location visibility.
 \\[helm-bookmark-help]\t\t->Run this help.
 \n== Helm Map ==
@@ -1157,11 +1154,6 @@ HELM-ATTRIBUTE should be a symbol."
   helm does its job in the minibuffer and in the
   `helm-buffer' and the current directory can be different
   there.")
-
-(helm-document-attribute 'delayed-init "optional"
-  "  Function called with no parameters before candidate function
-  is called.  It is similar with `init' attribute, but its
-  evaluation is deferred. It is useful to combine with ")
 
 (helm-document-attribute 'match "optional"
   "  List of functions called with one parameter: a candidate. The

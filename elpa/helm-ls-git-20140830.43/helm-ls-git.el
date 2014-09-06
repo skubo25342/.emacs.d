@@ -1,5 +1,5 @@
 ;;; helm-ls-git.el --- list git files. -*- lexical-binding: t -*-
-;; Version: 20140702.10
+;; Version: 20140830.43
 
 ;; Copyright (C) 2012 ~ 2014 Thierry Volpiatto <thierry.volpiatto@gmail.com>
 
@@ -20,7 +20,6 @@
 
 (require 'cl-lib)
 (require 'vc)
-(require 'helm-locate)
 (require 'helm-files)
 
 (defvaralias 'helm-c-source-ls-git 'helm-source-ls-git)
@@ -164,6 +163,16 @@ Valid values are symbol 'abs (default) or 'relative."
              ;; no branches yet.
              (if (or (null refs) (string= refs "")) "--" branch)))))
 
+(defun helm-ls-git-actions-list ()
+  (let ((actions (helm-actions-from-type-file)))
+    (helm-append-at-nth
+     actions
+     (helm-make-actions "Git grep files (`C-u' only, `C-u C-u' all)"
+                        'helm-ls-git-grep
+                        "Search in Git log (C-u show patch)"
+                        'helm-ls-git-search-log)
+     3)))
+
 (defvar helm-source-ls-git
   `((name . "Git files")
     (header-name . helm-ls-git-header-name)
@@ -179,7 +188,7 @@ Valid values are symbol 'abs (default) or 'relative."
     (candidate-transformer . (helm-ls-git-transformer
                               helm-ls-git-sort-fn))
     (action-transformer helm-transform-file-load-el)
-    (action . ,(cdr (helm-get-actions-from-type helm-source-locate)))))
+    (action . ,(helm-ls-git-actions-list))))
 
 
 (defun helm-ls-git-grep (candidate)
@@ -200,15 +209,6 @@ Valid values are symbol 'abs (default) or 'relative."
          ;; something else.
          (helm-ff-default-directory (file-name-directory candidate)))
     (helm-do-grep-1 files)))
-
-(helm-add-action-to-source
- "Git grep files (`C-u' only, `C-u C-u' all)"
- 'helm-ls-git-grep helm-source-ls-git 3)
-
-(helm-add-action-to-source
- "Search in Git log (C-u show patch)"
- 'helm-ls-git-search-log
- helm-source-ls-git 4)
 
 
 (defun helm-ls-git-search-log (_candidate)
@@ -378,13 +378,14 @@ Valid values are symbol 'abs (default) or 'relative."
                   helm-ff-default-directory)
                (error nil)))))
 
-(when (require 'helm-files)
-  (helm-add-action-to-source-if
-   "Git ls-files"
-   'helm-ff-ls-git-find-files
-   helm-source-find-files
-   'helm-ls-git-ff-dir-git-p
-   4))
+(add-hook 'helm-find-files-before-init-hook
+          (lambda ()
+            (helm-add-action-to-source-if
+             "Git ls-files"
+             'helm-ff-ls-git-find-files
+             helm-source-find-files
+             'helm-ls-git-ff-dir-git-p
+             4)))
 
 (provide 'helm-ls-git)
 

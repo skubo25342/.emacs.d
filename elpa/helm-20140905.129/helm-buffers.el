@@ -142,48 +142,48 @@ Only buffer names are fuzzy matched when this is enabled,
 
 (defvar helm-buffers-list-cache nil)
 (defvar helm-buffer-max-len-mode nil)
-(defvar helm-source-buffers-list
-  `((name . "Buffers")
-    (init . (lambda ()
-              ;; Issue #51 Create the list before `helm-buffer' creation.
-              (setq helm-buffers-list-cache (helm-buffer-list))
-              (let ((result (cl-loop for b in helm-buffers-list-cache
-                                  maximize (length b) into len-buf
-                                  maximize (length (with-current-buffer b
-                                                     (symbol-name major-mode)))
-                                  into len-mode
-                                  finally return (cons len-buf len-mode))))
-                (unless helm-buffer-max-length
-                  (setq helm-buffer-max-length (car result)))
-                (unless helm-buffer-max-len-mode
-                  ;; If a new buffer is longer that this value
-                  ;; this value will be updated
-                  (setq helm-buffer-max-len-mode (cdr result))))))
-    (candidates . helm-buffers-list-cache)
-    (no-matchplugin)
-    (type . buffer)
-    (match helm-buffers-list--match-fn)
-    (persistent-action . helm-buffers-list-persistent-action)
-    (keymap . ,helm-buffer-map)
-    (volatile)
-    (mode-line . helm-buffer-mode-line-string)
-    (persistent-help
-     . "Show this buffer / C-u \\[helm-execute-persistent-action]: Kill this buffer")))
+(defclass helm-source-buffers (helm-source-sync helm-type-buffer)
+  ((init :initform (lambda ()
+                     ;; Issue #51 Create the list before `helm-buffer' creation.
+                     (setq helm-buffers-list-cache (helm-buffer-list))
+                     (let ((result (cl-loop for b in helm-buffers-list-cache
+                                            maximize (length b) into len-buf
+                                            maximize (length (with-current-buffer b
+                                                               (symbol-name major-mode)))
+                                            into len-mode
+                                            finally return (cons len-buf len-mode))))
+                       (unless helm-buffer-max-length
+                         (setq helm-buffer-max-length (car result)))
+                       (unless helm-buffer-max-len-mode
+                         ;; If a new buffer is longer that this value
+                         ;; this value will be updated
+                         (setq helm-buffer-max-len-mode (cdr result))))))
+   (candidates :initform helm-buffers-list-cache)
+   (matchplugin :initform nil)
+   (match :initform 'helm-buffers-list--match-fn)
+   (persistent-action :initform 'helm-buffers-list-persistent-action)
+   (keymap :initform helm-buffer-map)
+   (volatile :initform t)
+   (mode-line :initform helm-buffer-mode-line-string)
+   (persistent-help
+    :initform
+    "Show this buffer / C-u \\[helm-execute-persistent-action]: Kill this buffer")))
+
+(defvar helm-source-buffers-list (helm--make-source "Buffers" 'helm-source-buffers))
 
 (defvar helm-source-buffer-not-found
-  `((name . "Create buffer")
-    (keymap . ,helm-map)
-    (dummy)
-    (action . (lambda (candidate)
-                (let ((mjm (and helm-current-prefix-arg
-                                (intern-soft (helm-comp-read
-                                              "Major-mode: "
-                                              helm-buffers-favorite-modes))))
-                      (buffer (get-buffer-create candidate)))
-                  (if mjm
-                      (with-current-buffer buffer (funcall mjm))
-                    (set-buffer-major-mode buffer))
-                  (helm-switch-to-buffer buffer))))))
+  (helm-build-dummy-source
+   "Create buffer"
+   :action (lambda (candidate)
+             (let ((mjm (and helm-current-prefix-arg
+                             (intern-soft (helm-comp-read
+                                           "Major-mode: "
+                                           helm-buffers-favorite-modes))))
+                   (buffer (get-buffer-create candidate)))
+               (if mjm
+                   (with-current-buffer buffer (funcall mjm))
+                   (set-buffer-major-mode buffer))
+               (helm-switch-to-buffer buffer)))))
 
 (defvar ido-temp-list)
 (defvar ido-ignored-list)
@@ -536,7 +536,8 @@ If REGEXP-FLAG is given use `query-replace-regexp'."
 
 (defun helm-revert-buffer (candidate)
   (with-current-buffer candidate
-    (when (buffer-file-name) (revert-buffer t t))))
+    (helm-aif (buffer-file-name)
+        (and (file-exists-p it) (revert-buffer t t)))))
 
 (defun helm-revert-marked-buffers (_ignore)
   (mapc 'helm-revert-buffer (helm-marked-candidates)))
@@ -738,24 +739,27 @@ displayed with the `file-name-shadow' face if available."
 
 (define-helm-type-attribute 'buffer
     `((action
-       ("Switch to buffer" . helm-switch-to-buffer)
-       ,(and (locate-library "popwin") '("Switch to buffer in popup window" . popwin:popup-buffer))
-       ("Switch to buffer other window" . switch-to-buffer-other-window)
-       ("Switch to buffer other frame" . switch-to-buffer-other-frame)
-       ,(and (locate-library "elscreen") '("Display buffer in Elscreen" . helm-find-buffer-on-elscreen))
-       ("Query replace regexp" . helm-buffer-query-replace-regexp)
-       ("Query replace" . helm-buffer-query-replace)
-       ("View buffer" . view-buffer)
-       ("Display buffer"   . display-buffer)
-       ("Grep buffers (C-u grep all buffers)" . helm-zgrep-buffers)
-       ("Multi occur buffer(s)" . helm-multi-occur-as-action)
-       ("Revert buffer(s)" . helm-revert-marked-buffers)
-       ("Insert buffer" . insert-buffer)
-       ("Kill buffer(s)" . helm-kill-marked-buffers)
-       ("Diff with file" . diff-buffer-with-file)
-       ("Ediff Marked buffers" . helm-ediff-marked-buffers)
-       ("Ediff Merge marked buffers" . (lambda (candidate)
-                                         (helm-ediff-marked-buffers candidate t))))
+       . ,(helm-make-actions
+           "Switch to buffer" 'helm-switch-to-buffer
+           (lambda () (and (locate-library "popwin") "Switch to buffer in popup window"))
+           'popwin:popup-buffer
+           "Switch to buffer other window" 'switch-to-buffer-other-window
+           "Switch to buffer other frame" 'switch-to-buffer-other-frame
+           (lambda () (and (locate-library "elscreen") "Display buffer in Elscreen"))
+           'helm-find-buffer-on-elscreen
+           "Query replace regexp" 'helm-buffer-query-replace-regexp
+           "Query replace" 'helm-buffer-query-replace
+           "View buffer" 'view-buffer
+           "Display buffer" 'display-buffer
+           "Grep buffers (C-u grep all buffers)" 'helm-zgrep-buffers
+           "Multi occur buffer(s)" 'helm-multi-occur-as-action
+           "Revert buffer(s)" 'helm-revert-marked-buffers
+           "Insert buffer" 'insert-buffer
+           "Kill buffer(s)" 'helm-kill-marked-buffers
+           "Diff with file" 'diff-buffer-with-file
+           "Ediff Marked buffers" 'helm-ediff-marked-buffers
+           "Ediff Merge marked buffers" (lambda (candidate)
+                                          (helm-ediff-marked-buffers candidate t))))
       (persistent-help . "Show this buffer")
       (filtered-candidate-transformer helm-skip-boring-buffers
                                       helm-buffers-sort-transformer
