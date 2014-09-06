@@ -9,7 +9,7 @@
 ;;;;;;  "malabar-mode-pkg.el" "malabar-mode.el" "malabar-project.el"
 ;;;;;;  "malabar-refactor.el" "malabar-reflection.el" "malabar-semanticdb.el"
 ;;;;;;  "malabar-test.el" "malabar-util.el" "malabar-variables.el"
-;;;;;;  "wisent-malabar-java-wy.el") (21477 51084 260930 0))
+;;;;;;  "wisent-malabar-java-wy.el") (21514 22869 763211 0))
 
 ;;;***
 
