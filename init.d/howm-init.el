@@ -9,6 +9,7 @@
 ;;;;; Ref: http://uwabami.junkhub.org/log/20101226p01.html
 ;;;;; Ref: http://www.kyo-ko.org/knowhow/vine/memo12.html
 ;;;;; Ref: http://codeout.hatenablog.com/entry/2014/04/16/023011
+;;;;; Ref: http://howm.sourceforge.jp/cgi-bin/hiki/hiki.cgi?SwitchMemoDirectory
 ;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -35,6 +36,16 @@
      (setq howm-keyword-file (concat howm-directory ".howm-keys"))
      ;;;; History file
      (setq howm-history-file (concat howm-directory ".howm-history"))
+     ;;;; Switch howm-directory
+     (defun howm:switch-howm-directory (dir)
+       `(lambda ()
+	  (interactive)
+	  (kill-buffer (howm-keyword-buffer))
+	  (setq howm-directory ,dir)
+	  (setq howm-keyword-file (concat howm-directory ".howm-keys"))
+	  (setq howm-history-file (concat howm-directory ".howm-history"))
+	  (howm-menu)
+	  (message "[howm]: howm-directory is switched to %s" ,dir)))
      ;;;; Enable howm-menu
      (howm-menu)))
 
