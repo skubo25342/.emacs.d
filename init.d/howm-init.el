@@ -28,7 +28,7 @@
      ;;;; Set menu file manually
      (setq howm-menu-top nil)
      ;;;; Menu file name
-     (setq howm-menu-file (concat howm-directory ".howm-menu"))
+     (setq howm-menu-file "~/howm/.howm-menu")
      ;;;; File name format
      ;;; Save files in "howm-directory"/"howm-file-name-format"
      (setq howm-file-name-format "%Y/%m/%Y-%m-%d.md")
