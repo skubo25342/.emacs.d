@@ -23,7 +23,7 @@
      ;;;; Set language
      (setq howm-menu-lang 'ja)
      ;;;; Howm data directory
-     (setq howm-directory "~/howm/")
+     (setq howm-directory "~/howm/general/")
      ;;;; Menu file
      ;;;; Set menu file manually
      (setq howm-menu-top nil)
